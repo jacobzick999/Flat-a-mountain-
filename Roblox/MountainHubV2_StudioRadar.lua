@@ -361,17 +361,23 @@ local function updateRadar()
                         label.TextColor3 = resource.Color
                     end
 
-                    if CONFIG.ShowHighlights and not highlights[part] then
-                        local highlight = Instance.new("Highlight")
-                        highlight.Name = "MountainHubResourceHighlight"
-                        highlight.Adornee = part
+                    if CONFIG.ShowHighlights then
+                        local highlight = highlights[part]
+                        if not highlight then
+                            highlight = Instance.new("Highlight")
+                            highlight.Name = "MountainHubResourceHighlight"
+                            highlight.Adornee = part
+                            -- Keep the outline bright while retaining the visible-only
+                            -- depth mode, so objects behind walls are not revealed.
+                            highlight.FillTransparency = 0.9
+                            highlight.OutlineTransparency = 0
+                            highlight.DepthMode = Enum.HighlightDepthMode.Occluded
+                            highlight.Parent = gui
+                            highlights[part] = highlight
+                        end
+                        -- Refresh colors in case an object's resource type changes.
                         highlight.FillColor = resource.Color
                         highlight.OutlineColor = resource.Color
-                        highlight.FillTransparency = 0.82
-                        highlight.OutlineTransparency = 0
-                        highlight.DepthMode = Enum.HighlightDepthMode.Occluded
-                        highlight.Parent = gui
-                        highlights[part] = highlight
                     end
                 end
             end
